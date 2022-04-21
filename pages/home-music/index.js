@@ -1,5 +1,9 @@
 // pages/home-music/index.js
 import { getBanners } from '../../service/api_music'
+import queryRect from '../../utils/query-rect'
+import throttle from '../../utils/throttle'
+
+const throttleQueryRect = throttle(queryRect)
 Page({
 
   /**
@@ -32,12 +36,9 @@ Page({
     })
   },
   handleSwiperImageLoaded() {
-    const query = wx.createSelectorQuery()
-    query.select('.swiper-image').boundingClientRect()
-    query.exec((res) => {
+    throttleQueryRect(".swiper-image").then(res => {
       const rect = res[0]
-      this.setData({ swiperHeight: rect.height })
+      this.setData({ swiperHeight: rect.height})
     })
-
   }  
 })
