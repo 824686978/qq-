@@ -18,7 +18,7 @@
     "scopeDataCheck": false,
     "uglifyFileName": false,
     "checkInvalidKey": true,
-    "checkSiteMap": true,
+    "checkSiteMap": false,
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
     "lazyloadPlaceholderEnable": false,
@@ -42,9 +42,9 @@
     "ignoreUploadUnusedFiles": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.24.0",
+  "libVersion": "2.17.0",
   "appid": "wx68fa142968a0b759",
-  "projectname": "%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AE%9E%E6%88%98",
+  "projectname": "YJmusic",
   "debugOptions": {
     "hidedInDevtools": []
   },

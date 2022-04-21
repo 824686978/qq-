@@ -1,0 +1,37 @@
+// wxs 只能使用es5的语法
+// 对数字进行格式化
+function formatCount(count) {
+  // 把数据转成Int类型
+  var counter = parseInt(count)
+  // 判断数据
+  if (counter > 100000000) {
+    return (counter / 100000000).toFixed(1) + "亿"
+  } else if (counter > 10000) {
+    return (counter / 10000).toFixed(1) + "万"
+  } else {
+    return counter + ""
+  }
+}
+
+// 对时间的个位数进行格式化
+function padLeftZero(time) {
+  time = time + ""
+  return ("00" + time).slice(time.length)
+}
+
+// 对事件进行格式化
+function formatDuration(duration) {
+  // 把时间单位转成秒
+  duration = duration / 1000
+  // 获取分钟
+  var minute = Math.floor(duration / 60)
+  // 获取 秒钟
+  var second = Math.floor(duration) % 60
+
+  return padLeftZero(minute) + ":" + padLeftZero(second)
+}
+
+module.exports = {
+  formatCount: formatCount,
+  formatDuration: formatDuration
+}
