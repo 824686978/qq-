@@ -1,5 +1,6 @@
 <!--pages/detail-video/index.wxml-->
 <video class="video" 
        src="{{mvURLInfo.url}}"
+       referrer-policy="origin"
        autoplay>
 </video>

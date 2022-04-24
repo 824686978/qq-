@@ -6,3 +6,19 @@ export function getBanners() {
     type: 2
   })
 }
+
+// 请求首页歌曲数据
+export function getRankings(idx) {
+  return yjRequest.get("/top/list", {
+    idx
+  })
+}
+
+// 请求歌单数据
+export function getSongMenu(cat="全部", limit=6 , offset=0) {
+  return yjRequest.get("/top/playlist", {
+    cat,
+    limit,
+    offset
+  })
+}
