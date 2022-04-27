@@ -1,5 +1,5 @@
 // pages/home-music/index.js
-import { rankingStore } from '../../store/index'
+import { rankingStore, rankingMap } from '../../store/index'
 
 import { getBanners, getSongMenu } from '../../service/api_music'
 import queryRect from '../../utils/query-rect'
@@ -59,6 +59,22 @@ Page({
       this.setData({ recommendSongMenu : res.playlists })
     })
   },
+  // 请求巅峰榜数据
+  getRankingHandler(idx) {
+    return (res) => {
+      // 判断是否有数据
+      if (Object.keys(res).length === 0) return
+      const name = res.name
+      const coverImgUrl = res.coverImgUrl
+      const playCount = res.playCount
+      const songList = res.tracks.slice(0, 3)
+      const rankingObj = { name, coverImgUrl, playCount, songList }
+      const newRankings = { ...this.data.rankings, [idx]: rankingObj }
+      this.setData({
+        rankings: newRankings
+      })
+    }
+  },
   onUnload() {},
 
   // 事件处理逻辑
@@ -75,20 +91,21 @@ Page({
       this.setData({ swiperHeight: rect.height})
     })
   },
-  getRankingHandler(idx) {
-    return (res) => {
-      // 判断是否有数据
-      if (Object.keys(res).length === 0) return
-      const name = res.name
-      const coverImgUrl = res.coverImgUrl
-      const playCount = res.playCount
-      const songList = res.tracks.slice(0, 3)
-      const rankingObj = { name, coverImgUrl, playCount, songList }
-      const newRankings = { ...this.data.rankings, [idx]: rankingObj }
-      this.setData({
-        rankings: newRankings
-      })
-    }
-  } 
-
+  // 监听子组件更多的点击
+  handleMoreClick() {
+    this.navigateToDetailSongsPage("hotRanking")
+  },
+  navigateToDetailSongsPage(rangkingName) {
+    wx.navigateTo({
+      url: `/pages/detail-songs/index?ranking=${rangkingName}&type=rank`,
+    })
+  },
+  // 监听巅峰榜的点击
+  handleRankingItemClick(event) {
+    // 获取点击巅峰榜的idx
+    const idx = event.currentTarget.dataset.idx
+    // 根据idx 匹配定义数据
+    const rankingName = rankingMap[idx]
+    this.navigateToDetailSongsPage(rankingName)
+  }
 })

@@ -22,3 +22,9 @@ export function getSongMenu(cat="全部", limit=6 , offset=0) {
     offset
   })
 }
+// 请求歌单详情
+export function getSongMenuDetail(id) {
+  return yjRequest.get('/playlist/detail/dynamic', {
+    id
+  })
+}
