@@ -35,17 +35,20 @@ Page({
 
     // 3.判断关键字为空字符的处理逻辑
     if (!searchValue.length) {
-      this.setData({ suggestSongs: [] })
-      this.setData({ resultSongs: [] })
+      this.setData({ suggestSongs: [], resultSongs: [] })
+      // 方法一 1.解决防抖带来的bug
+      debounceGetSearchSuggest.cancel()
       return
     }
 
     // 4.根据关键字进行搜索
     debounceGetSearchSuggest(searchValue).then(res => {
+      //  fangfaer2.解决防抖带来的bug
+      // if (!this.data.searchValue.length) return
       // 1.获取建议的关键字歌曲
       const suggestSongs = res.result.allMatch
       this.setData({ suggestSongs })
-
+      if (!suggestSongs) return
       // 2.转成nodes节点
       const suggestKeywords = suggestSongs.map(item => item.keyword)
       const suggestSongsNodes = []
