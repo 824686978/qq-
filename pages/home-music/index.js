@@ -1,11 +1,11 @@
 // pages/home-music/index.js
-import { rankingStore, rankingMap } from '../../store/index'
+import { rankingStore, rankingMap, playerStore } from '../../store/index'
 
 import { getBanners, getSongMenu } from '../../service/api_music'
 import queryRect from '../../utils/query-rect'
 import throttle from '../../utils/throttle'
 
-const throttleQueryRect = throttle(queryRect)
+const throttleQueryRect = throttle(queryRect, 1000, { trailing: true })
 Page({
 
   /**
@@ -23,29 +23,26 @@ Page({
     // 推荐歌单
     recommendSongMenu: [],
     // 巅峰榜数据
-    rankings: { 0: {}, 2: {}, 3: {} }
+    rankings: { 0: {}, 2: {}, 3: {} },
+    //
+    currentSong: {},
+    isPlaying: false,
+    playAnimState: 'paused'
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function () {
+    // playerStore.dispatch('playMusicWithSongIdAction', { id: 488249475 }) 
     // 获取页面数据
     this.getPageData()
 
     // 发起共享数据的请求
     rankingStore.dispatch('getRankingDataAction')
-    // 获取共享数据
-    rankingStore.onState('hotRanking', (res) => {
-      // 判断是否有值
-      if (!res.tracks) return
-      // 获取前6条歌曲
-      const recommendSongs = res.tracks.slice(0, 6)
-      this.setData({ recommendSongs })
-    })
-    rankingStore.onState('newRanking', this.getRankingHandler(0))
-    rankingStore.onState('originRanking', this.getRankingHandler(2))
-    rankingStore.onState('upRanking', this.getRankingHandler(3))
+    
+
+    this.setupPlayerStoreListener()
   },
   // 网络请求
   getPageData() {
@@ -88,12 +85,23 @@ Page({
   handleSwiperImageLoaded() {
     throttleQueryRect(".swiper-image").then(res => {
       const rect = res[0]
-      this.setData({ swiperHeight: rect.height})
+      if (rect) {
+        this.setData({ swiperHeight: rect.height})
+      }
     })
   },
   // 监听子组件更多的点击
   handleMoreClick() {
     this.navigateToDetailSongsPage("hotRanking")
+  },
+  // 监听暂停
+  handlePlayBtnClick() {
+    playerStore.dispatch('changeMusicPlayStatusAction', !this.data.isPlaying)
+  },
+  handlePlayBarClick() {
+    wx.navigateTo({
+      url: `/pages/music-player/index?id=${this.data.currentSong.id}`,
+    })
   },
   navigateToDetailSongsPage(rangkingName) {
     wx.navigateTo({
@@ -107,5 +115,31 @@ Page({
     // 根据idx 匹配定义数据
     const rankingName = rankingMap[idx]
     this.navigateToDetailSongsPage(rankingName)
+  },
+  // 获取歌单
+  handleSongItemClick(event) {
+    const index = event.currentTarget.dataset.index
+    playerStore.setState('playListSongs', this.data.recommendSongs)
+    playerStore.setState('playListIndex', index)
+
+  },
+  setupPlayerStoreListener() {
+    // 获取排行榜的监听
+    rankingStore.onState('hotRanking', (res) => {
+      // 判断是否有值
+      if (!res.tracks) return
+      // 获取前6条歌曲
+      const recommendSongs = res.tracks.slice(0, 6)
+      this.setData({ recommendSongs })
+    })
+    rankingStore.onState('newRanking', this.getRankingHandler(0))
+    rankingStore.onState('originRanking', this.getRankingHandler(2))
+    rankingStore.onState('upRanking', this.getRankingHandler(3))
+
+    // 2. 播放器的监听
+    playerStore.onStates(['currentSong', 'isPlaying'], ({ currentSong, isPlaying }) => {
+      if (currentSong) this.setData({ currentSong })
+      if (isPlaying !== undefined) this.setData({ isPlaying, playAnimState: isPlaying ? 'running' : 'paused' })
+    })
   }
 })

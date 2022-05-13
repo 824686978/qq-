@@ -1,5 +1,5 @@
 // pages/detail-songs/index.js
-import { rankingStore } from '../../store/index'
+import { playerStore, rankingStore } from '../../store/index'
 import { getSongMenuDetail } from '../../service/api_music'
 Page({
 
@@ -23,7 +23,6 @@ Page({
     if (type === 'menu') {
       const id = options.id
       getSongMenuDetail(id).then(res => {
-        console.log(res)
         this.setData({ songInfo: res.playlist })
       })
     } else if (type === 'rank') {
@@ -47,5 +46,10 @@ Page({
   // 事件处理函数
   getRangkingDataHanlder(res) {
     this.setData({ songInfo: res })
+  },
+  handleItemClick(event) {
+    const index = event.currentTarget.dataset.index
+    playerStore.setState('playListSongs', this.data.songInfo.tracks)
+    playerStore.setState('playListIndex', index)
   }
 })

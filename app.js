@@ -6,7 +6,7 @@ App({
     statusBarHeight: 0,
     deviceRadio: 0
   },
-  onLaunch() {
+  async onLaunch() {
     // 获取屏幕宽度
     const info = wx.getSystemInfoSync()
     this.globalData.screenHeight = info.screenHeight
@@ -16,6 +16,6 @@ App({
     // 手机宽高比
     const deviceRadio = info.screenHeight / info.screenWidth
     this.globalData.deviceRadio = deviceRadio
-
   }
+
 })

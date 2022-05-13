@@ -31,6 +31,9 @@ Component({
    * 组件的方法列表
    */
   methods: {
-
+    // 返回
+    handleLeftClick() {
+      this.triggerEvent('click')
+    }
   }
 })
